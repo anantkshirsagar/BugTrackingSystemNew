@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>Bug Tracking System</title>
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css">
+		<link href="ext-js/MDB/css/bootstrap.min.css" rel="stylesheet">
+		<link href="ext-js/MDB/css/mdb.min.css" rel="stylesheet">
+		<link href="ext-js/MDB/css/style.css" rel="stylesheet">			
+		<script src="angular-js-lib/angular.min.js"> </script>	
+		
+		<style type="text/css">
+			html, body, header, .view {
+				height: 100%;
+			}
+			
+			@media (max-width: 740px) {
+				html, body, header, .view {
+					height: 1000px;
+				}
+			}
+			
+			@media (min-width: 800px) and (max-width: 850px) {
+				html, body, header, .view {
+					height: 650px;
+				}
+			}
+			
+			@media (min-width: 800px) and (max-width: 850px) {
+				.navbar:not(.top-nav-collapse) {
+					background: #1C2331!important;
+				}
+			}
+		</style>
+	</head>
+	<body ng-app="btsApp" ng-controller="managerAssignProjectCtr">
+		<nav class="navbar navbar-expand-lg navbar-dark primary-color">
+		    <a class="navbar-brand" href="manager-home.html">Manager</a>
+		    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+		        <span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+		        <ul class="navbar-nav mr-auto">
+		            <li class="nav-item active">
+		               <a class="nav-link waves-effect waves-light" href="manager-home.html">Home </a>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link waves-effect waves-light" href="add-project.html">Project</a>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link waves-effect waves-light" href="developer-list.html">Developer List</a>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link waves-effect waves-light" href="tester-list.html">Tester List</a>
+		            </li>
+		            <li class="nav-item">
+		                <a class="nav-link waves-effect waves-light" href="approval-list.html">Assign Project</a>
+		            </li>
+		        </ul>
+	            <div class="nav-item">
+	                <a class="nav-link waves-effect waves-light" href="#"><font color="white">Logout</font></a>
+	            </div>
+		    </div>
+		</nav>
+		
+		<div class="container">
+			<br>
+			<div class="card" ng-if="projectList">
+				<h5 class="card-header text-center primary-color headerColor" style="color: white;">Projects List</h5>
+				<div class="card-body">
+					<table id="tablePreview" class="table table-hover table-bordered">
+						<thead style="background:#e3f2fd;">
+							<th>Sr. No.</th>
+							<th>Project Name</th>
+							<th>Description</th>
+							<th>Start Date</th>
+							<th>Status</th>
+						</thead>
+						
+						<tbody>
+							<tr>
+								<td>{{$index+1}}</td>
+								<td>{{projectEntity.projectName}}</td>
+								<td>{{projectEntity.description}}</td>
+								<td>{{projectEntity.startDate}}</td>
+								<td>{{projectEntity.status}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			
+			<br>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="card">
+						<h5 class="card-header text-center primary-color headerColor" style="color: white;">Developer List</h5>
+						<div class="card-body">
+							<table id="tablePreview" class="table table-hover table-bordered">
+								<thead style="background:#e3f2fd;">
+									<th>Sr. No.</th>
+									<th>Select Developer</th>
+								</thead>
+								
+								<tbody>
+									<tr ng-repeat="developer in developerList">
+										<td>{{$index+1}}</td>
+										<td>
+											<div class="custom-control custom-checkbox">
+											    <input type="checkbox" class="custom-control-input" id="developer:{{developer.id}}"  ng-model="developer.isSelected" ng-change="selectedDevelopers(developer, developer.isSelected, $index)">
+											    <label class="custom-control-label" for="developer:{{developer.id}}">{{developer.fullName}}</label>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-6">
+					<div class="card">
+						<h5 class="card-header text-center primary-color headerColor" style="color: white;">Tester List</h5>
+						<div class="card-body">
+							<table id="tablePreview" class="table table-hover table-bordered">
+								<thead style="background:#e3f2fd;">
+									<th>Sr. No.</th>
+									<th>Select Tester</th>
+								</thead>
+								
+								<tbody>
+									<tr ng-repeat="tester in testerList">
+										<td>{{$index+1}}</td>
+										<td>
+											<div class="custom-control custom-checkbox">
+											    <input type="checkbox" class="custom-control-input" id="tester:{{tester.id}}" ng-model="tester.isSelected" ng-change="selectedTester(tester, tester.isSelected, $index)">
+											    <label class="custom-control-label" for="tester:{{tester.id}}">{{tester.fullName}}</label>
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<br>
+			<div class="card">
+				<h5 class="card-header text-center primary-color red lighten-1" style="color: white;">Actions</h5>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-3">
+							<button type="button" class="btn btn-primary btn-block" ng-disabled="saveButton" data-toggle="modal" data-target="#saveButtonId">Save</button>
+						</div>
+						<div class="col-md-3">
+							<button type="button" class="btn btn-primary btn-block" ng-disabled="sendToTesterButton" ng-click="">Send To Tester</button>
+						</div>
+						<div class="col-md-3">
+							<button type="button" class="btn btn-primary btn-block" ng-disabled="sendToDeveloperButton" ng-click="">Send To Developer</button>
+						</div>
+						<div class="col-md-3">
+							<button type="button" class="btn btn-primary btn-block" ng-disabled="finalSubmitButton" data-toggle="modal" data-target="#finalButtonId" ng-click="">Final Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			
+			<!-- Final submit button dialog -->
+			<div class="modal fade" id="finalButtonId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header primary-color">
+        					<h5 class="modal-title text-white" id="exampleModalLabel">Confirm Action</h5>
+       					</div>
+						<div class="modal-body">
+							Do you want to final submit. After submit you cannot change it. Project is finalized.
+						</div>
+						<div class="row" align="right">
+							<div class="col-md-6">
+							</div>
+							<div class="col-md-6">
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" ng-click="goToHomePage()">Cancel</button>
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" ng-click="goToHomePage()">Okay</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Save button dialog -->
+			<div class="modal fade" id="saveButtonId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header primary-color">
+        					<h5 class="modal-title text-white" id="exampleModalLabel">Confirm Action</h5>
+       					</div>
+						<div class="modal-body">
+							Are you sure, do you want to save? After save you cannot change developers and tester.
+						</div>
+						<div class="row" align="right">
+							<div class="col-md-6">
+							</div>
+							<div class="col-md-6">
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" ng-click="">Cancel</button>
+								<button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" ng-click="saveDocument()">Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		
+		<script type="text/javascript" src="ext-js/MDB/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="ext-js/MDB/js/popper.min.js"></script>
+		<script type="text/javascript" src="ext-js/MDB/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="ext-js/MDB/js/mdb.js"></script>
+		<script src="js/manager-assign-project.ctr.js"> </script>	
+	</body>
+</html>
